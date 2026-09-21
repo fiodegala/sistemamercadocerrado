@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { api, brl } from '../api.js';
 import Cupom from '../components/Cupom.jsx';
 
@@ -14,6 +14,9 @@ export default function PDV() {
   const [sucesso, setSucesso] = useState('');
   const [ultimaVenda, setUltimaVenda] = useState(null);
   const [cupomAberto, setCupomAberto] = useState(false);
+  const [codigo, setCodigo] = useState('');
+  const [bipeMsg, setBipeMsg] = useState(null); // { ok: bool, texto }
+  const codigoRef = useRef(null);
 
   useEffect(() => { api.get('/clientes').then(setClientes).catch(() => {}); }, []);
 
@@ -43,6 +46,23 @@ export default function PDV() {
     setCarrinho((c) => c.map((i) => i.produto_id === id ? { ...i, quantidade: Math.max(0, Number(qtd)) } : i));
   }
   function remover(id) { setCarrinho((c) => c.filter((i) => i.produto_id !== id)); }
+
+  // Leitor de código de barras: o scanner "digita" o código e dá Enter.
+  async function biparCodigo(e) {
+    e.preventDefault();
+    const cod = codigo.trim();
+    if (!cod) return;
+    try {
+      const p = await api.get(`/produtos/codigo/${encodeURIComponent(cod)}`);
+      adicionar(p);
+      setBipeMsg({ ok: true, texto: `✓ ${p.nome} adicionado` });
+    } catch {
+      setBipeMsg({ ok: false, texto: `✗ Código ${cod} não encontrado` });
+    } finally {
+      setCodigo('');
+      codigoRef.current?.focus();
+    }
+  }
 
   const subtotal = useMemo(() => carrinho.reduce((s, i) => s + i.preco_unitario * i.quantidade, 0), [carrinho]);
   const total = Math.max(0, subtotal - Number(desconto || 0));
@@ -86,8 +106,24 @@ export default function PDV() {
       <div className="pdv-layout">
         {/* Coluna: busca de produtos */}
         <div className="card">
-          <div className="section-title">Produtos</div>
-          <input placeholder="Buscar produto por nome ou código..." value={busca} autoFocus onChange={(e) => setBusca(e.target.value)} />
+          <form className="bipe-box" onSubmit={biparCodigo}>
+            <span className="bipe-icone">📷</span>
+            <input
+              ref={codigoRef}
+              className="bipe-input"
+              placeholder="Bipe ou digite o código de barras e tecle Enter"
+              value={codigo}
+              autoFocus
+              onChange={(e) => setCodigo(e.target.value)}
+            />
+            <button type="submit" className="btn pequeno">Adicionar</button>
+          </form>
+          {bipeMsg && (
+            <div className={bipeMsg.ok ? 'bipe-msg ok' : 'bipe-msg erro'}>{bipeMsg.texto}</div>
+          )}
+
+          <div className="section-title" style={{ marginTop: 16 }}>Ou busque por nome</div>
+          <input placeholder="Buscar produto por nome ou código..." value={busca} onChange={(e) => setBusca(e.target.value)} />
           <div className="pdv-resultados mt">
             {resultados.length === 0 ? <div className="vazio">Nenhum produto.</div> :
               resultados.map((p) => (

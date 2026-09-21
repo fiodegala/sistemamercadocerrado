@@ -23,6 +23,13 @@ router.get('/', (req, res) => {
   res.json(db.prepare(sql).all(params));
 });
 
+// Busca por código de barras exato (usado pelo leitor no PDV).
+router.get('/codigo/:codigo', (req, res) => {
+  const row = db.prepare(`${SELECT} WHERE p.codigo_barras = ? AND p.ativo = 1`).get(String(req.params.codigo).trim());
+  if (!row) return res.status(404).json({ erro: 'Código de barras não cadastrado' });
+  res.json(row);
+});
+
 router.get('/:id', (req, res) => {
   const row = db.prepare(`${SELECT} WHERE p.id = ?`).get(req.params.id);
   if (!row) return res.status(404).json({ erro: 'Produto não encontrado' });

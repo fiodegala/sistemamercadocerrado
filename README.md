@@ -9,8 +9,9 @@ Aplicação web full-stack: **Node + Express + SQLite** no backend e **React + V
 
 ## ✨ Funcionalidades (MVP)
 
-- **PDV / Vendas** — busca de produtos, carrinho, desconto, forma de pagamento e
-  finalização com baixa automática de estoque (transação atômica).
+- **PDV / Vendas** — busca de produtos, **leitor de código de barras** (bipe e Enter),
+  carrinho, desconto, forma de pagamento e finalização com baixa automática de
+  estoque (transação atômica), além de **cupom/recibo imprimível**.
 - **Controle de estoque** — movimentações de entrada/saída/ajuste, histórico e
   alertas de estoque abaixo do mínimo.
 - **Cadastros** — produtos (com categorias, preços e código de barras), clientes e fornecedores.
@@ -85,6 +86,7 @@ sistemamercadocerrado/
 | POST   | `/api/auth/login`             | Login — devolve token de sessão        |
 | GET    | `/api/auth/me`                | Dados do usuário autenticado           |
 | GET    | `/api/produtos?q=`            | Lista/busca produtos                   |
+| GET    | `/api/produtos/codigo/:cod`   | Busca produto por código de barras     |
 | POST   | `/api/produtos`               | Cria produto                           |
 | PUT    | `/api/produtos/:id`           | Atualiza produto                       |
 | GET    | `/api/categorias`             | Lista categorias                       |
@@ -99,10 +101,15 @@ sistemamercadocerrado/
 
 ---
 
+## ✅ Já implementado além do MVP
+
+- Autenticação e perfis de usuário (administrador × operador de caixa)
+- Impressão de cupom / recibo da venda
+- Leitura de código de barras via scanner no PDV
+
 ## 🛣️ Próximos passos sugeridos
 
-- Autenticação e perfis de usuário (operador de caixa vs. administrador)
-- Impressão de cupom / recibo da venda
-- Leitura de código de barras via scanner
+- Gestão de usuários pela interface (criar/editar operadores)
 - Contas a pagar/receber e fluxo de caixa
 - Exportação de relatórios (PDF/Excel)
+- Recuperação de senha
