@@ -136,3 +136,31 @@ label { display: block; font-size: 12px; font-weight: 600; color: var(--texto-su
 .produto-item small { color: var(--texto-suave); }
 .carrinho-total { font-size: 30px; font-weight: 800; color: var(--verde-escuro); }
 .qtd-input { width: 70px; text-align: center; }
+
+/* ---------- Cupom / Recibo ---------- */
+.cupom-modal { max-width: 380px; }
+.cupom-print {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; color: #000; background: #fff;
+  padding: 8px 4px; line-height: 1.5;
+}
+.cupom-header { text-align: center; }
+.cupom-header strong { font-size: 16px; display: block; }
+.cupom-linha { border-top: 1px dashed #000; margin: 8px 0; }
+.cupom-meta { text-align: center; font-size: 12px; }
+.cupom-itens { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cupom-itens th, .cupom-itens td { border: none; padding: 2px 3px; text-align: left; }
+.cupom-itens th.num, .cupom-itens td.num { text-align: right; }
+.cupom-itens th { border-bottom: 1px solid #000; text-transform: none; color: #000; letter-spacing: 0; }
+.cupom-totais > div { display: flex; justify-content: space-between; }
+.cupom-total { font-weight: 700; font-size: 15px; margin: 4px 0; }
+.cupom-rodape { text-align: center; font-size: 12px; margin-top: 4px; }
+
+@media print {
+  body * { visibility: hidden; }
+  .cupom-print, .cupom-print * { visibility: visible; }
+  .cupom-print { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+  .nao-imprimir { display: none !important; }
+  .modal-overlay { background: none; position: static; }
+  .modal { box-shadow: none; max-width: none; padding: 0; }
+}

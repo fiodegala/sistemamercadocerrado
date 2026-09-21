@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api, brl } from '../api.js';
+import Cupom from '../components/Cupom.jsx';
 
 export default function PDV() {
   const [busca, setBusca] = useState('');
@@ -11,6 +12,8 @@ export default function PDV() {
   const [pagamento, setPagamento] = useState('dinheiro');
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
+  const [ultimaVenda, setUltimaVenda] = useState(null);
+  const [cupomAberto, setCupomAberto] = useState(false);
 
   useEffect(() => { api.get('/clientes').then(setClientes).catch(() => {}); }, []);
 
@@ -56,6 +59,8 @@ export default function PDV() {
         itens: itens.map((i) => ({ produto_id: i.produto_id, quantidade: i.quantidade, preco_unitario: i.preco_unitario })),
       });
       setSucesso(`Venda #${venda.id} registrada — ${brl(venda.total)}`);
+      setUltimaVenda(venda);
+      setCupomAberto(true);
       setCarrinho([]); setDesconto(0); setClienteId(''); setPagamento('dinheiro'); setBusca('');
       // Recarrega resultados para refletir o novo estoque.
       api.get('/produtos?ativos=1').then((r) => setResultados(r.slice(0, 30)));
@@ -69,7 +74,14 @@ export default function PDV() {
       </div>
 
       {erro && <div className="erro-msg">{erro}</div>}
-      {sucesso && <div className="ok-msg">{sucesso}</div>}
+      {sucesso && (
+        <div className="ok-msg flex" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>{sucesso}</span>
+          {ultimaVenda && (
+            <button className="btn secundario pequeno" onClick={() => setCupomAberto(true)}>Ver cupom</button>
+          )}
+        </div>
+      )}
 
       <div className="pdv-layout">
         {/* Coluna: busca de produtos */}
@@ -147,6 +159,8 @@ export default function PDV() {
           </div>
         </div>
       </div>
+
+      {cupomAberto && <Cupom venda={ultimaVenda} onFechar={() => setCupomAberto(false)} />}
     </>
   );
 }

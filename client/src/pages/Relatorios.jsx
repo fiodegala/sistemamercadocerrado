@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, brl } from '../api.js';
+import Cupom from '../components/Cupom.jsx';
 
 function hojeISO() { return new Date().toISOString().slice(0, 10); }
 function inicioMesISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`; }
@@ -11,6 +12,11 @@ export default function Relatorios() {
   const [ate, setAte] = useState(hojeISO());
   const [relatorio, setRelatorio] = useState(null);
   const [vendas, setVendas] = useState([]);
+  const [cupomVenda, setCupomVenda] = useState(null);
+
+  async function abrirCupom(id) {
+    try { setCupomVenda(await api.get(`/vendas/${id}`)); } catch { /* ignore */ }
+  }
 
   async function carregar() {
     const [rel, lista] = await Promise.all([
@@ -80,7 +86,7 @@ export default function Relatorios() {
               <div style={{ maxHeight: 320, overflowY: 'auto' }}>
                 {vendas.length === 0 ? <div className="vazio">Nenhuma venda.</div> : (
                   <table>
-                    <thead><tr><th>#</th><th>Data</th><th>Cliente</th><th className="num">Total</th></tr></thead>
+                    <thead><tr><th>#</th><th>Data</th><th>Cliente</th><th className="num">Total</th><th></th></tr></thead>
                     <tbody>
                       {vendas.map((v) => (
                         <tr key={v.id}>
@@ -88,6 +94,7 @@ export default function Relatorios() {
                           <td><small>{v.criado_em}</small></td>
                           <td>{v.cliente_nome || 'Consumidor final'}</td>
                           <td className="num">{brl(v.total)}</td>
+                          <td className="num"><button className="btn-link" onClick={() => abrirCupom(v.id)}>Cupom</button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -98,6 +105,8 @@ export default function Relatorios() {
           </div>
         </>
       )}
+
+      {cupomVenda && <Cupom venda={cupomVenda} onFechar={() => setCupomVenda(null)} />}
     </>
   );
 }
