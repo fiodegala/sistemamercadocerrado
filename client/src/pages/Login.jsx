@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../auth.jsx';
+import logo from '../assets/logo.webp';
 
-export default function Login() {
+export default function Login({ tema, onAlternarTema }) {
   const { entrar } = useAuth();
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
@@ -23,13 +24,8 @@ export default function Login() {
   return (
     <div className="login-tela">
       <form className="login-card" onSubmit={submeter}>
-        <div className="login-brand">
-          <span className="login-logo">🌿</span>
-          <div>
-            <strong>Mercado Cerrado</strong>
-            <small>Sistema de Gestão</small>
-          </div>
-        </div>
+        <img src={logo} alt="Cerrado Premium Supermercado" className="login-logo-img" />
+        <div className="login-sub">Sistema de Gestão</div>
 
         {erro && <div className="erro-msg">{erro}</div>}
 
@@ -50,6 +46,14 @@ export default function Login() {
           Acesso de demonstração:<br />
           <b>admin / admin123</b> (administrador) · <b>caixa / caixa123</b> (operador)
         </div>
+
+        {onAlternarTema && (
+          <div style={{ textAlign: 'center', marginTop: 14 }}>
+            <button type="button" className="btn-link" onClick={onAlternarTema}>
+              {tema === 'dark' ? '☀️ Tema claro' : '🌙 Tema escuro'}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

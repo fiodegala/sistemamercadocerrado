@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
+import logo from './assets/logo.webp';
 import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import PDV from './pages/PDV.jsx';
@@ -19,21 +21,34 @@ const links = [
   { to: '/relatorios', label: 'Relatórios', icon: '📈' },
 ];
 
+// Detecta o tema inicial: escolha salva ou preferência do sistema.
+function temaInicial() {
+  try {
+    const salvo = localStorage.getItem('mc_tema');
+    if (salvo === 'light' || salvo === 'dark') return salvo;
+  } catch { /* ignore */ }
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 export default function App() {
   const { usuario, carregando, sair } = useAuth();
+  const [tema, setTema] = useState(temaInicial);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', tema);
+    try { localStorage.setItem('mc_tema', tema); } catch { /* ignore */ }
+  }, [tema]);
+
+  const alternarTema = () => setTema((t) => (t === 'dark' ? 'light' : 'dark'));
 
   if (carregando) return <div className="vazio" style={{ paddingTop: 80 }}>Carregando...</div>;
-  if (!usuario) return <Login />;
+  if (!usuario) return <Login tema={tema} onAlternarTema={alternarTema} />;
 
   return (
     <div className="layout">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-logo">🌿</span>
-          <div>
-            <strong>Mercado Cerrado</strong>
-            <small>Sistema de Gestão</small>
-          </div>
+          <img src={logo} alt="Cerrado Premium Supermercado" className="brand-logo-img" />
         </div>
         <nav>
           {links.map((l) => (
@@ -53,7 +68,12 @@ export default function App() {
           </div>
           <button className="btn-sair" onClick={sair}>Sair</button>
         </div>
-        <footer className="sidebar-footer">v0.1.0 · MVP</footer>
+        <footer className="sidebar-footer">
+          <span>v0.1.0 · Premium</span>
+          <button className="tema-btn" onClick={alternarTema}>
+            {tema === 'dark' ? '☀️ Claro' : '🌙 Escuro'}
+          </button>
+        </footer>
       </aside>
 
       <main className="content">

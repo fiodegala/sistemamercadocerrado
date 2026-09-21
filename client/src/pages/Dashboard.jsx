@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { api, brl } from '../api.js';
 
-const CORES = ['#2e7d32', '#66bb6a', '#f59e0b', '#0ea5e9', '#8b5cf6'];
+const CORES = ['#c9a24b', '#5e8c3a', '#e3c77d', '#7cb05a', '#a5822f'];
 
 export default function Dashboard() {
   const [dados, setDados] = useState(null);
@@ -59,7 +59,7 @@ export default function Dashboard() {
                 <XAxis dataKey="dia" fontSize={12} />
                 <YAxis fontSize={12} tickFormatter={(v) => `R$${v}`} />
                 <Tooltip formatter={(v) => brl(v)} />
-                <Bar dataKey="faturamento" fill="#2e7d32" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="faturamento" fill="#c9a24b" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -89,7 +89,7 @@ export default function Dashboard() {
           </div>
           <div>
             <div className="kpi-label">A preço de venda</div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: '#2e7d32' }}>{brl(valorEstoque.venda)}</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--ouro-escuro)' }}>{brl(valorEstoque.venda)}</div>
           </div>
           <div>
             <div className="kpi-label">Margem potencial</div>
