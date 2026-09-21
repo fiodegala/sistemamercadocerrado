@@ -1,0 +1,20 @@
+# Dependências
+node_modules/
+
+# Banco de dados local (SQLite)
+*.db
+*.db-journal
+*.sqlite
+server/data/
+
+# Build do frontend
+client/dist/
+
+# Logs e temporários
+*.log
+npm-debug.log*
+.DS_Store
+
+# Variáveis de ambiente
+.env
+.env.local
