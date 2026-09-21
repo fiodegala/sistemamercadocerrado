@@ -1,6 +1,7 @@
 // Popula o banco com dados de exemplo para testar o sistema rapidamente.
 // Uso: npm run seed  (apaga e recria os dados de demonstração)
 import db from './db.js';
+import { hashSenha } from './auth.js';
 
 console.log('Limpando dados existentes...');
 db.exec(`
@@ -11,8 +12,14 @@ db.exec(`
   DELETE FROM categorias;
   DELETE FROM clientes;
   DELETE FROM fornecedores;
+  DELETE FROM usuarios;
   DELETE FROM sqlite_sequence;
 `);
+
+// Usuários padrão (troque as senhas em produção).
+const insUser = db.prepare('INSERT INTO usuarios (nome, usuario, senha_hash, perfil) VALUES (?, ?, ?, ?)');
+insUser.run('Administrador', 'admin', hashSenha('admin123'), 'admin');
+insUser.run('Operador de Caixa', 'caixa', hashSenha('caixa123'), 'caixa');
 
 const categorias = ['Hortifruti', 'Bebidas', 'Padaria', 'Limpeza', 'Laticínios', 'Mercearia'];
 const insCat = db.prepare('INSERT INTO categorias (nome) VALUES (?)');
@@ -90,3 +97,4 @@ criarVenda([[6, 1.5], [10, 2]], null, 'credito');
 console.log('Seed concluído:');
 console.log(`  ${categorias.length} categorias, ${produtos.length} produtos, ${clientes.length} clientes`);
 console.log('  4 vendas de exemplo registradas.');
+console.log('  Usuários: admin/admin123 (admin) e caixa/caixa123 (caixa).');

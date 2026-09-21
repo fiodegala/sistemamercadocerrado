@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api.js';
+import { useAuth } from '../auth.jsx';
 import Modal from '../components/Modal.jsx';
 
 const VAZIO = { nome: '', cpf: '', telefone: '', email: '', endereco: '' };
 
 export default function Clientes() {
+  const { admin } = useAuth();
   const [lista, setLista] = useState([]);
   const [busca, setBusca] = useState('');
   const [form, setForm] = useState(null);
@@ -36,7 +38,7 @@ export default function Clientes() {
     <>
       <div className="page-header">
         <div><h1>Clientes</h1><p>Cadastro de clientes do mercado</p></div>
-        <button className="btn" onClick={() => setForm({ ...VAZIO })}>+ Novo cliente</button>
+        {admin && <button className="btn" onClick={() => setForm({ ...VAZIO })}>+ Novo cliente</button>}
       </div>
 
       <div className="toolbar">
@@ -46,7 +48,7 @@ export default function Clientes() {
       <div className="card">
         {lista.length === 0 ? <div className="vazio">Nenhum cliente cadastrado.</div> : (
           <table>
-            <thead><tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th><th></th></tr></thead>
+            <thead><tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th>{admin && <th></th>}</tr></thead>
             <tbody>
               {lista.map((c) => (
                 <tr key={c.id}>
@@ -54,10 +56,12 @@ export default function Clientes() {
                   <td>{c.cpf || '—'}</td>
                   <td>{c.telefone || '—'}</td>
                   <td>{c.email || '—'}</td>
-                  <td className="num">
-                    <button className="btn-link" onClick={() => setForm(c)}>Editar</button>
-                    <button className="btn-link perigo" onClick={() => excluir(c.id)}>Excluir</button>
-                  </td>
+                  {admin && (
+                    <td className="num">
+                      <button className="btn-link" onClick={() => setForm(c)}>Editar</button>
+                      <button className="btn-link perigo" onClick={() => excluir(c.id)}>Excluir</button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

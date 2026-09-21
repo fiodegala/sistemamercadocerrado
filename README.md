@@ -39,6 +39,18 @@ Abra **http://localhost:5173** no navegador.
 
 > Para rodar separadamente: `npm run dev:server` e `npm run dev:client`.
 
+### 🔐 Acesso (login)
+
+O sistema exige login. O seed cria dois usuários de demonstração:
+
+| Usuário | Senha      | Perfil        | Pode                                            |
+|---------|------------|---------------|-------------------------------------------------|
+| `admin` | `admin123` | Administrador | Tudo (cadastros, estoque, vendas, relatórios)   |
+| `caixa` | `caixa123` | Operador      | Consultar tudo e registrar vendas no PDV        |
+
+> **Troque essas senhas em produção** e defina a variável de ambiente `AUTH_SECRET`
+> no backend para assinar os tokens de sessão.
+
 O banco de dados é um arquivo SQLite criado automaticamente em `server/data/mercado.db`
 (fora do controle de versão).
 
@@ -70,6 +82,8 @@ sistemamercadocerrado/
 
 | Método | Rota                          | Descrição                              |
 |--------|-------------------------------|----------------------------------------|
+| POST   | `/api/auth/login`             | Login — devolve token de sessão        |
+| GET    | `/api/auth/me`                | Dados do usuário autenticado           |
 | GET    | `/api/produtos?q=`            | Lista/busca produtos                   |
 | POST   | `/api/produtos`               | Cria produto                           |
 | PUT    | `/api/produtos/:id`           | Atualiza produto                       |

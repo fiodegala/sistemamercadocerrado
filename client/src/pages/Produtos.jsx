@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, brl } from '../api.js';
+import { useAuth } from '../auth.jsx';
 import Modal from '../components/Modal.jsx';
 
 const VAZIO = {
@@ -14,6 +15,7 @@ function statusEstoque(p) {
 }
 
 export default function Produtos() {
+  const { admin } = useAuth();
   const [lista, setLista] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [busca, setBusca] = useState('');
@@ -62,7 +64,7 @@ export default function Produtos() {
     <>
       <div className="page-header">
         <div><h1>Produtos</h1><p>{lista.length} produto(s) cadastrado(s)</p></div>
-        <button className="btn" onClick={() => setForm({ ...VAZIO })}>+ Novo produto</button>
+        {admin && <button className="btn" onClick={() => setForm({ ...VAZIO })}>+ Novo produto</button>}
       </div>
 
       <div className="toolbar">
@@ -75,7 +77,7 @@ export default function Produtos() {
             <thead>
               <tr>
                 <th>Produto</th><th>Categoria</th><th className="num">Preço venda</th>
-                <th className="num">Estoque</th><th>Status</th><th></th>
+                <th className="num">Estoque</th><th>Status</th>{admin && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -89,10 +91,12 @@ export default function Produtos() {
                   <td className="num">{brl(p.preco_venda)}</td>
                   <td className="num">{p.estoque} {p.unidade}</td>
                   <td>{statusEstoque(p)}</td>
-                  <td className="num">
-                    <button className="btn-link" onClick={() => setForm(p)}>Editar</button>
-                    <button className="btn-link perigo" onClick={() => excluir(p.id)}>Excluir</button>
-                  </td>
+                  {admin && (
+                    <td className="num">
+                      <button className="btn-link" onClick={() => setForm(p)}>Editar</button>
+                      <button className="btn-link perigo" onClick={() => excluir(p.id)}>Excluir</button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

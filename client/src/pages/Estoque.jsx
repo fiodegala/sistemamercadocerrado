@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api.js';
+import { useAuth } from '../auth.jsx';
 import Modal from '../components/Modal.jsx';
 
 export default function Estoque() {
+  const { admin } = useAuth();
   const [alertas, setAlertas] = useState([]);
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [produtos, setProdutos] = useState([]);
@@ -40,9 +42,11 @@ export default function Estoque() {
     <>
       <div className="page-header">
         <div><h1>Estoque</h1><p>Movimentações e alertas de reposição</p></div>
-        <button className="btn" onClick={() => setForm({ produto_id: '', tipo: 'entrada', quantidade: 1, motivo: '' })}>
-          + Movimentação
-        </button>
+        {admin && (
+          <button className="btn" onClick={() => setForm({ produto_id: '', tipo: 'entrada', quantidade: 1, motivo: '' })}>
+            + Movimentação
+          </button>
+        )}
       </div>
 
       <div className="grid-2">

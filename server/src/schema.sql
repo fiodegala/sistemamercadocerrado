@@ -1,6 +1,16 @@
 -- Schema do Sistema Mercado Cerrado
 -- SQLite. Todas as tabelas usam IF NOT EXISTS para permitir boot idempotente.
 
+CREATE TABLE IF NOT EXISTS usuarios (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome       TEXT NOT NULL,
+  usuario    TEXT NOT NULL UNIQUE,
+  senha_hash TEXT NOT NULL,
+  perfil     TEXT NOT NULL DEFAULT 'caixa',   -- admin, caixa
+  ativo      INTEGER NOT NULL DEFAULT 1,
+  criado_em  TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+);
+
 CREATE TABLE IF NOT EXISTS categorias (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
   nome      TEXT NOT NULL UNIQUE

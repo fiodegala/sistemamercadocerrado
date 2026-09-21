@@ -1,4 +1,6 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
+import { useAuth } from './auth.jsx';
+import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import PDV from './pages/PDV.jsx';
 import Produtos from './pages/Produtos.jsx';
@@ -18,6 +20,11 @@ const links = [
 ];
 
 export default function App() {
+  const { usuario, carregando, sair } = useAuth();
+
+  if (carregando) return <div className="vazio" style={{ paddingTop: 80 }}>Carregando...</div>;
+  if (!usuario) return <Login />;
+
   return (
     <div className="layout">
       <aside className="sidebar">
@@ -36,6 +43,16 @@ export default function App() {
             </NavLink>
           ))}
         </nav>
+        <div className="usuario-box">
+          <div className="usuario-info">
+            <span className="usuario-avatar">{usuario.nome.charAt(0)}</span>
+            <div>
+              <strong>{usuario.nome}</strong>
+              <small>{usuario.perfil === 'admin' ? 'Administrador' : 'Operador de caixa'}</small>
+            </div>
+          </div>
+          <button className="btn-sair" onClick={sair}>Sair</button>
+        </div>
         <footer className="sidebar-footer">v0.1.0 · MVP</footer>
       </aside>
 

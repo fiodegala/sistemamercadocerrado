@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api.js';
+import { useAuth } from '../auth.jsx';
 import Modal from '../components/Modal.jsx';
 
 const VAZIO = { nome: '', cnpj: '', telefone: '', email: '' };
 
 export default function Fornecedores() {
+  const { admin } = useAuth();
   const [lista, setLista] = useState([]);
   const [busca, setBusca] = useState('');
   const [form, setForm] = useState(null);
@@ -36,7 +38,7 @@ export default function Fornecedores() {
     <>
       <div className="page-header">
         <div><h1>Fornecedores</h1><p>Cadastro de fornecedores</p></div>
-        <button className="btn" onClick={() => setForm({ ...VAZIO })}>+ Novo fornecedor</button>
+        {admin && <button className="btn" onClick={() => setForm({ ...VAZIO })}>+ Novo fornecedor</button>}
       </div>
 
       <div className="toolbar">
@@ -46,7 +48,7 @@ export default function Fornecedores() {
       <div className="card">
         {lista.length === 0 ? <div className="vazio">Nenhum fornecedor cadastrado.</div> : (
           <table>
-            <thead><tr><th>Nome</th><th>CNPJ</th><th>Telefone</th><th>E-mail</th><th></th></tr></thead>
+            <thead><tr><th>Nome</th><th>CNPJ</th><th>Telefone</th><th>E-mail</th>{admin && <th></th>}</tr></thead>
             <tbody>
               {lista.map((f) => (
                 <tr key={f.id}>
@@ -54,10 +56,12 @@ export default function Fornecedores() {
                   <td>{f.cnpj || '—'}</td>
                   <td>{f.telefone || '—'}</td>
                   <td>{f.email || '—'}</td>
-                  <td className="num">
-                    <button className="btn-link" onClick={() => setForm(f)}>Editar</button>
-                    <button className="btn-link perigo" onClick={() => excluir(f.id)}>Excluir</button>
-                  </td>
+                  {admin && (
+                    <td className="num">
+                      <button className="btn-link" onClick={() => setForm(f)}>Editar</button>
+                      <button className="btn-link perigo" onClick={() => excluir(f.id)}>Excluir</button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
